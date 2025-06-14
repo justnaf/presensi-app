@@ -63,7 +63,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
-            $table->foreignId('attendee_id')->nullable()->constrained('attendees')->onDelete('set null');
+            $table->foreignId('attendee_id')->nullable()->constrained('event_attendees')->onDelete('set null');
             $table->timestamp('scanned_at')->useCurrent();
             $table->string('location')->nullable();
             $table->string('name')->nullable(); // untuk barcode mode
