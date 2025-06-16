@@ -29,6 +29,7 @@ const page = usePage();
 const user = page.props.auth.user as User;
 
 const form = useForm({
+    username: user.username,
     name: user.name,
     email: user.email,
 });
@@ -46,13 +47,26 @@ const submit = () => {
 
         <SettingsLayout>
             <div class="flex flex-col space-y-6">
-                <HeadingSmall title="Profile information" description="Update your name and email address" />
+                <HeadingSmall title="Profile information" description="Update your profile information" />
 
                 <form @submit.prevent="submit" class="space-y-6">
                     <div class="grid gap-2">
                         <Label for="name">Name</Label>
                         <Input id="name" class="mt-1 block w-full" v-model="form.name" required autocomplete="name" placeholder="Full name" />
                         <InputError class="mt-2" :message="form.errors.name" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="username">Username</Label>
+                        <Input
+                            id="username"
+                            class="mt-1 block w-full"
+                            v-model="form.username"
+                            required
+                            autocomplete="username"
+                            placeholder="Username"
+                        />
+                        <InputError class="mt-2" :message="form.errors.username" />
                     </div>
 
                     <div class="grid gap-2">
@@ -63,7 +77,7 @@ const submit = () => {
                             class="mt-1 block w-full"
                             v-model="form.email"
                             required
-                            autocomplete="username"
+                            autocomplete="email"
                             placeholder="Email address"
                         />
                         <InputError class="mt-2" :message="form.errors.email" />
@@ -96,7 +110,7 @@ const submit = () => {
                             leave-active-class="transition ease-in-out"
                             leave-to-class="opacity-0"
                         >
-                            <p v-show="form.recentlySuccessful" class="text-sm text-neutral-600">Saved.</p>
+                            <p v-if="form.recentlySuccessful" class="text-sm text-neutral-600">Saved.</p>
                         </Transition>
                     </div>
                 </form>
