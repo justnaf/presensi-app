@@ -10,18 +10,19 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Response;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Traits\RedirectsWithFlash;
 
 class InstitutionController extends Controller
 {
-
+    use RedirectsWithFlash;
     /**
      * Terapkan middleware Spatie Permission ke semua metode di controller ini.
      */
     public function __construct()
     {
-        $this->middleware('permission:view institutions', ['only' => ['index', 'show']]);
-        $this->middleware('permission:create institutions', ['only' => ['create', 'store']]);
-        $this->middleware('permission:edit institutions', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:view institutions', ['only' => ['index']]);
+        $this->middleware('permission:create institutions', ['only' => ['store']]);
+        $this->middleware('permission:edit institutions', ['only' => ['update']]);
         $this->middleware('permission:delete institutions', ['only' => ['destroy']]);
     }
 
@@ -51,34 +52,17 @@ class InstitutionController extends Controller
     }
 
     /**
-     * Menampilkan form untuk membuat institusi baru.
-     */
-    public function create() {}
-
-    /**
      * Menyimpan institusi yang baru dibuat ke dalam database.
      */
     public function store(StoreInstitutionRequest $request): RedirectResponse
     {
         try {
             Institution::create($request->validated());
-            return redirect()->route('admin.institutions.index')
-                ->with('success', 'Institusi berhasil ditambahkan.');
+            return $this->redirectSuccess('admin.institutions.index', 'Institusi berhasil ditambahkan.');
         } catch (\Exception $e) {
-            return redirect()->route('admin.institutions.index')
-                ->with('error', 'Gagal menambahkan institusi.');
+            return $this->redirectError($e, 'Gagal menambahkan institusi.');
         }
     }
-
-    /**
-     * Menampilkan detail satu institusi.
-     */
-    public function show(Institution $institution) {}
-
-    /**
-     * Menampilkan form untuk mengedit institusi.
-     */
-    public function edit(Institution $institution) {}
 
     /**
      * Memperbarui data institusi di database.
@@ -87,11 +71,9 @@ class InstitutionController extends Controller
     {
         try {
             $institution->update($request->validated());
-            return redirect()->route('admin.institutions.index')
-                ->with('success', 'Institusi berhasil diperbarui.');
+            return $this->redirectSuccess('admin.institutions.index', 'Institusi berhasil diperbarui.');
         } catch (\Exception $e) {
-            return redirect()->route('admin.institutions.index')
-                ->with('error', 'Gagal memperbarui institusi.');
+            return $this->redirectError($e, 'Gagal memperbarui institusi.');
         }
     }
 
@@ -101,16 +83,13 @@ class InstitutionController extends Controller
     public function destroy(Institution $institution): RedirectResponse
     {
         try {
-            // Pastikan tidak ada relasi yang menghalangi penghapusan jika perlu
-            if ($institution->users()->exists()) { // Contoh pengecekan relasi
+            if ($institution->users()->exists()) {
                 return back()->with('error', 'Gagal menghapus. Institusi masih memiliki pengguna terkait.');
             }
             $institution->delete();
-            return redirect()->route('admin.institutions.index')
-                ->with('success', 'Institusi berhasil dihapus.');
+            return $this->redirectSuccess('admin.institutions.index', 'Institusi berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->route('admin.institutions.index')
-                ->with('error', 'Gagal menghapus institusi.');
+            return $this->redirectError($e, 'Gagal menghapus institusi.');
         }
     }
 }
