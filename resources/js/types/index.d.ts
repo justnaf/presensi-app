@@ -35,5 +35,11 @@ export interface User {
     created_at: string;
     updated_at: string;
 }
+export interface FlashProps {
+    flash?: {
+      success?: string
+      error?: string
+    }
+  }
 
 export type BreadcrumbItemType = BreadcrumbItem;

@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -47,5 +50,35 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function institutions(): BelongsToMany
+    {
+        return $this->belongsToMany(Institution::class);
+    }
+
+    /**
+     * Mendapatkan semua pendaftaran (tiket) milik user.
+     */
+    public function eventAttendees(): HasMany
+    {
+        return $this->hasMany(EventAttendee::class);
+    }
+
+    /**
+     * Mendapatkan semua data kehadiran milik user.
+     */
+    public function eventAttendances(): HasMany
+    {
+        return $this->hasMany(EventAttendance::class);
+    }
+
+    /**
+     * Mendapatkan semua event yang didaftari oleh user
+     * melalui pendaftaran/tiket (EventAttendee).
+     */
+    public function registeredEvents(): HasManyThrough
+    {
+        return $this->hasManyThrough(Event::class, EventAttendee::class);
     }
 }

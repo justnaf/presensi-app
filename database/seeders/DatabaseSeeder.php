@@ -32,17 +32,17 @@ class DatabaseSeeder extends Seeder
         ]);
         // User::factory(10)->create();
         $admin = Role::create(['name' => 'Administrator']);
-        $peggunaRole = Role::create(['name' => 'Pengguna']);
+        $penggunaRole = Role::create(['name' => 'Pengguna']);
 
         $permissions = [
             'edit roles',
-            'add roles',
+            'view roles',
             'delete roles',
-            'read roles',
-            'add institutions',
+            'create roles',
+            'view institutions',
             'edit institutions',
             'delete institutions',
-            'read institutions',
+            'create institutions',
         ];
 
         foreach ($permissions as $perm) {
@@ -51,6 +51,6 @@ class DatabaseSeeder extends Seeder
         // Sync all permissions to the admin role
         $admin->syncPermissions(Permission::all());
         $adminUser->assignRole($admin);
-        $penggunaUser->assignRole($peggunaRole);
+        $penggunaUser->assignRole($penggunaRole);
     }
 }
