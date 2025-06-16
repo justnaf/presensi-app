@@ -24,9 +24,15 @@ class DatabaseSeeder extends Seeder
             'email' => 'naufalaf86@gmail.com',
             'password' => Hash::make('123'),
         ]);
+        $penggunaUser = User::create([
+            'username' => 'larrry_Ap',
+            'name' => 'Larry',
+            'email' => 'larrry.ap@example.com',
+            'password' => Hash::make('123'),
+        ]);
         // User::factory(10)->create();
         $admin = Role::create(['name' => 'Administrator']);
-        Role::create(['name' => 'Pengguna']);
+        $peggunaRole = Role::create(['name' => 'Pengguna']);
 
         $permissions = [
             'edit roles',
@@ -45,5 +51,6 @@ class DatabaseSeeder extends Seeder
         // Sync all permissions to the admin role
         $admin->syncPermissions(Permission::all());
         $adminUser->assignRole($admin);
+        $penggunaUser->assignRole($peggunaRole);
     }
 }
