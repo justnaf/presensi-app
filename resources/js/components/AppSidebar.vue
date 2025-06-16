@@ -5,9 +5,10 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, LayoutGrid, Shield, University, User } from 'lucide-vue-next';
+import { BookOpen, LayoutGrid, Shield, University, User, UsersRound } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
+// All navigation is now in one data structure
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
@@ -19,20 +20,27 @@ const mainNavItems: NavItem[] = [
         href: '/admin/institutions',
         icon: University,
     },
+    // This is now a dropdown parent item
     {
-        title: 'Users',
-        href: '/admin/users',
-        icon: User,
+        title: 'User Settings',
+        icon: UsersRound,
+        children: [
+            {
+                title: 'Users',
+                href: '/admin/users',
+                icon: User,
+            },
+            {
+                title: 'Roles',
+                href: '/admin/roles',
+                icon: Shield,
+            },
+        ],
+        href: '',
     },
 ];
 
 const footerNavItems: NavItem[] = [
-    {
-        title: 'Roles',
-        href: '/admin/roles',
-        external: false,
-        icon: Shield,
-    },
     {
         title: 'Documentation',
         href: 'https://laravel.com/docs/starter-kits#vue',
@@ -57,7 +65,8 @@ const footerNavItems: NavItem[] = [
         </SidebarHeader>
 
         <SidebarContent>
-            <NavMain :items="mainNavItems" />
+            <!-- NavMain now handles the dropdown logic automatically -->
+            <NavMain :items="mainNavItems" label="Main Navigation" />
         </SidebarContent>
 
         <SidebarFooter>
