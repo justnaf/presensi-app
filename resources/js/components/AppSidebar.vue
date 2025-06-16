@@ -5,7 +5,7 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, CalendarDays, LayoutGrid, Shield, Tag, University, User, UsersRound } from 'lucide-vue-next';
+import { BookOpen, CalendarDays, CalendarPlus, LayoutGrid, Shield, Tag, University, User, UsersRound } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 // All navigation is now in one data structure
@@ -47,6 +47,11 @@ const mainNavItems: NavItem[] = [
                 title: 'Manage Categories',
                 href: '/admin/event-categories',
                 icon: Tag,
+            },
+            {
+                title: 'Manage Events',
+                href: '/admin/events',
+                icon: CalendarPlus,
             },
         ],
     },

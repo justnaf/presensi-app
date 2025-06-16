@@ -6,6 +6,8 @@ use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
+use Illuminate\Support\Facades\Log;
+
 
 class HandleInertiaRequests extends Middleware
 {
@@ -38,6 +40,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
+        Log::info('Inertia Share Payload:', $request->session()->all());
 
         return [
             ...parent::share($request),

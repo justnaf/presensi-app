@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\InstitutionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\Events\EventCategoryController;
+use App\Http\Controllers\Admin\Events\EventController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -21,6 +22,7 @@ Route::group(['middleware' => ['auth', 'role:Administrator'], 'prefix' => 'admin
     Route::resource('roles', RoleController::class)->except(['create', 'show', 'edit']);
     Route::resource('users', UserController::class)->except(['create', 'store', 'show', 'edit']);
     Route::resource('event-categories', EventCategoryController::class)->except(['create', 'show', 'edit']);
+    Route::resource('events', EventController::class)->except(['show']);
 
     require __DIR__ . '/settings.php';
 });
