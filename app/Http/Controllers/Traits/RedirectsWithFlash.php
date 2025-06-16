@@ -21,10 +21,18 @@ trait RedirectsWithFlash
      */
     protected function redirectError(\Exception $e, string $message): RedirectResponse
     {
-        // Catat error sebenarnya di file log untuk developer
+        // Catat error sebenarnya yang lengkap di file log untuk developer
         Log::error($e->getMessage() . ' - ' . $e->getTraceAsString());
 
-        // Redirect pengguna kembali dengan pesan yang ramah
-        return back()->with('error', $message);
+        // Buat pesan error dasar
+        $errorMessage = $message;
+
+        // Jika mode debug aktif (di file .env), tambahkan detail error
+        if (config('app.debug')) {
+            $errorMessage .= ' Error: ' . $e->getMessage();
+        }
+
+        // Redirect pengguna kembali dengan pesan yang sudah diformat
+        return back()->with('error', $errorMessage);
     }
 }

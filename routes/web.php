@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\InstitutionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\Events\EventCategoryController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -19,6 +20,7 @@ Route::group(['middleware' => ['auth', 'role:Administrator'], 'prefix' => 'admin
     Route::resource('institutions', InstitutionController::class)->except(['create', 'show', 'edit']);
     Route::resource('roles', RoleController::class)->except(['create', 'show', 'edit']);
     Route::resource('users', UserController::class)->except(['create', 'store', 'show', 'edit']);
+    Route::resource('event-categories', EventCategoryController::class)->except(['create', 'show', 'edit']);
 
     require __DIR__ . '/settings.php';
 });
