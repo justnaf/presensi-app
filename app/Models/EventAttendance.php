@@ -26,6 +26,8 @@ class EventAttendance extends Model
         'event_id',
         'user_id',
         'attendee_id',
+        'scanned_barcode_value',
+        'scanned_at',
         'location',
         'name',
         'origin_institution',
