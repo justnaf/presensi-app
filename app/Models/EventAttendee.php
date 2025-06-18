@@ -19,7 +19,6 @@ class EventAttendee extends Model
         'user_id',
         'event_id',
         'ticket_code',
-        'barcode',
     ];
 
     /**

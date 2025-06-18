@@ -2,8 +2,8 @@
 // Semua logika dan impor yang berhubungan dengan Layout dipindahkan ke sini
 import AppLogo from '@/components/AppLogo.vue';
 import { useAppearance } from '@/composables/useAppearance';
-import { Link } from '@inertiajs/vue3';
-import { ClipboardList, House, MessageCircleMore, Monitor, Moon, Sun, User } from 'lucide-vue-next';
+import { Link, usePage } from '@inertiajs/vue3';
+import { AlignRight, ClipboardList, House, Monitor, Moon, QrCode, Sun, Ticket, User } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 // State untuk menu dropdown header
@@ -26,12 +26,15 @@ function cycleTheme() {
 }
 
 // Logika untuk navigasi bawah (menandai yang aktif)
-const navigation = [
-    { name: 'Beranda', href: '#', icon: House, current: true },
-    { name: 'Aktivitas', href: '#', icon: ClipboardList, current: false },
-    { name: 'Pesan', href: '#', icon: MessageCircleMore, current: false },
+const page = usePage();
+const navigation = computed(() => [
+    { name: 'Beranda', href: route('dashboard'), icon: House, current: page.url.startsWith('/dashboard') },
+    // We assume the route for 'Aktivitas' is 'user.events.index' which corresponds to the '/events' URL
+    { name: 'Aktivitas', href: route('activities.index'), icon: ClipboardList, current: page.url.startsWith('/activities') },
+    { name: 'Ticket', href: route('histories.my-tickets'), icon: Ticket, current: page.url.startsWith('/histories') },
+    { name: 'QR Scanner', href: '#', icon: QrCode, current: false },
     { name: 'Profil', href: '#', icon: User, current: false },
-];
+]);
 </script>
 
 <template>
@@ -55,15 +58,7 @@ const navigation = [
                         @click="showHeaderNav = !showHeaderNav"
                         class="rounded-full p-1.5 hover:bg-gray-200 focus:outline-none dark:hover:bg-gray-700"
                     >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-6 w-6 text-gray-600 dark:text-gray-300"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-6 6h6" />
-                        </svg>
+                        <AlignRight class="h-6 w-6 text-gray-600 dark:text-gray-300" />
                     </button>
                 </div>
             </div>
@@ -87,10 +82,11 @@ const navigation = [
 
         <main class="flex-grow overflow-y-auto p-5 pb-24">
             <slot />
+            <slot name="footer" />
         </main>
 
         <nav class="fixed right-0 bottom-0 left-0 z-10 border-t border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-            <div class="grid grid-cols-4">
+            <div class="grid grid-cols-5">
                 <Link
                     v-for="item in navigation"
                     :key="item.name"
