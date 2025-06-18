@@ -167,4 +167,12 @@ class EventController extends Controller
             'history' => $history,
         ]);
     }
+
+    /**
+     * Display the QR code scanner page for the user.
+     */
+    public function qrScanner(Request $request): Response
+    {
+        return Inertia::render('User/Activities/Scanner');
+    }
 }

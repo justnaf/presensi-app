@@ -47,12 +47,15 @@ Route::group(['middleware' => ['auth', 'role:Administrator'], 'prefix' => 'admin
 // Grup untuk Dashboard Pengguna
 Route::group(['middleware' => ['auth'],], function () {
     Route::get('/dashboard', UserDashboardController::class)->name('dashboard');
+
     Route::get('/activities', [UserEventController::class, 'index'])->name('activities.index');
+    Route::get('/activities/{event}', [UserEventController::class, 'show'])->name('activities.show');
+    Route::post('/activities/{event}/join', [UserEventController::class, 'join'])->name('activities.join');
+    Route::get('/scanner', [UserEventController::class, 'qrScanner'])->name('scanner');
+
     Route::get('/histories/my-tickets', [UserEventController::class, 'myTickets'])->name('histories.my-tickets');
     Route::get('/histories/my-tickets/attendances', [UserEventController::class, 'attendanceHistories'])->name('histories.my-tickets.attendances');
     Route::get('/histories/my-tickets/{ticket}', [UserEventController::class, 'showTickets'])->name('histories.my-tickets.show');
-    Route::get('/activities/{event}', [UserEventController::class, 'show'])->name('activities.show');
-    Route::post('/activities/{event}/join', [UserEventController::class, 'join'])->name('activities.join');
     // ... rute pengguna lainnya di sini ...
 });
 

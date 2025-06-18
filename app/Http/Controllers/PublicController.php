@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Traits\RedirectsWithFlash;
 use App\Models\Event;
 use App\Models\EventAttendance;
+use App\Models\EventStaticQr;
+use App\Models\Institution; // 1. Import the Institution model
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,78 +15,111 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
-
 class PublicController extends Controller
 {
+    use RedirectsWithFlash;
+
     /**
-     * Menampilkan form check-in setelah pengguna memindai QR Code.
-     * Fungsi ini memvalidasi ID dari QR code sebelum menampilkan form.
+     * Shows the check-in form after a user scans a static QR code.
      */
     public function showCheckInForm(Request $request): Response|RedirectResponse
     {
-        // 1. Validasi input dasar dari URL
-        $validated = $request->validate([
-            'event_id' => 'required|exists:events,id',
-            'scan_id' => 'required|string|uuid', // Memastikan formatnya UUID
-        ]);
+        $validated = $request->validate(['code' => 'required|string|uuid']);
+        $staticQr = EventStaticQr::where('code', $validated['code'])->first();
 
-        $event = Event::find($validated['event_id']);
-        $scanId = $validated['scan_id'];
-
-        // 2. Validasi Aturan Bisnis
-        // Cek apakah event sedang berlangsung
-        if ($event->status !== 'ongoing') {
-            return redirect()->route('home')->with('error', 'Maaf, event ini belum dimulai atau sudah selesai.');
+        if (!$staticQr) {
+            return $this->flashRedirect('route', 'home', [], 'error', 'QR Code tidak valid atau tidak ditemukan.');
         }
 
-        // Cek apakah event ini menggunakan mode barcode
+        $event = Event::find($staticQr->event_id);
+
+        if (!$event || !in_array($event->status, ['registration', 'ongoing'])) {
+            return $this->flashRedirect('route', 'home', [], 'error', 'Event ini tidak aktif atau pendaftaran telah ditutup.');
+        }
+
         if ($event->attendance_mode !== 'barcode') {
-            return redirect()->route('home')->with('error', 'Metode absensi untuk event ini tidak valid.');
+            return $this->flashRedirect('route', 'home', [], 'error', 'Metode absensi untuk event ini tidak valid.');
         }
 
-        // 3. Validasi "One-Time Use" (Paling Penting)
-        // Cek apakah QR Code (scan_id) ini sudah pernah digunakan untuk event ini
-        $isUsed = EventAttendance::where('event_id', $event->id)
-            ->where('scanned_barcode_value', $scanId)
-            ->exists();
-
-        if ($isUsed) {
-            return redirect()->route('home')->with('error', 'QR Code ini sudah digunakan. Silakan minta QR Code baru.');
+        if (Auth::check()) {
+            if (EventAttendance::where('event_id', $event->id)->where('user_id', Auth::id())->exists()) {
+                return $this->flashRedirect('route', 'home', [], 'success', 'Anda sudah tercatat hadir di event ini. Terima kasih!');
+            }
         }
 
-        // 4. Jika semua validasi lolos, tampilkan halaman form check-in
         return Inertia::render('Public/CheckIn', [
             'event' => $event->only('id', 'name'),
-            'scan_id' => $scanId, // Kirim scan_id ke frontend
+            'staticQr' => $staticQr->only('id', 'code', 'label'),
+            'institutions' => Institution::all(['id', 'name']),
         ]);
     }
 
     /**
-     * Memproses data check-in dari pengguna.
+     * Processes the check-in data from the user.
      */
     public function processCheckIn(Request $request): RedirectResponse
     {
+        // 1. Correctly validate all fields sent from the form
         $validated = $request->validate([
             'name' => 'required_if:is_guest,true|string|max:255',
-            'origin_institution' => 'nullable|string|max:255',
             'is_guest' => 'required|boolean',
-            'scan_id' => 'required|string|uuid|unique:event_attendance,scanned_barcode_value',
+            'code' => 'required|string|uuid|exists:event_static_qrs,code',
             'event_id' => 'required|exists:events,id',
+            'institution_id' => 'nullable|exists:institutions,id',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
         ]);
 
+        $staticQr = EventStaticQr::where('code', $validated['code'])->first();
+        $user = Auth::user();
+
+        // Security re-check to prevent race conditions
+        if ($user && EventAttendance::where('event_id', $validated['event_id'])->where('user_id', $user->id)->exists()) {
+            return $this->redirectBackWithError('Anda sudah tercatat hadir.');
+        }
+
+        // --- START: Refactored Logic ---
+        $attendeeName = '';
+        $attendeeInstitution = null;
+
+        if ($validated['is_guest']) {
+            // Logic for guest users
+            $attendeeName = $validated['name'];
+            if (!empty($validated['institution_id'])) {
+                $institution = Institution::find($validated['institution_id']);
+                $attendeeInstitution = $institution?->name;
+            }
+        } elseif ($user) {
+            // Logic for authenticated users
+            $attendeeName = $user->name;
+            // You could optionally fetch the user's institution here if they have one
+            // $attendeeInstitution = $user->institution?->name;
+        } else {
+            // Fallback case if something goes wrong (e.g., user logs out mid-process)
+            return $this->redirectBackWithError('Sesi Anda tidak valid. Silakan coba lagi.');
+        }
+        // --- END: Refactored Logic ---
+
         try {
+            $scannedValue = sprintf(
+                '%s - BRCD - %s',
+                $staticQr->label,
+                strtoupper(Str::random(10))
+            );
+
             EventAttendance::create([
                 'event_id' => $validated['event_id'],
-                'user_id' => Auth::id(), // Akan null jika tamu
-                'scanned_barcode_value' => $validated['scan_id'],
-                'name' => $validated['is_guest'] ? $validated['name'] : Auth::user()->name,
-                'origin_institution' => $validated['origin_institution'],
+                'user_id' => $user?->id,
+                'scanned_barcode_value' => $scannedValue,
+                'name' => $attendeeName, // Use the prepared name
+                'origin_institution' => $attendeeInstitution, // Use the prepared institution
+                'latitude' => $validated['latitude'],
+                'longitude' => $validated['longitude'],
             ]);
 
-            return redirect()->route('home')->with('success', 'Check-in berhasil! Selamat datang.');
+            return $this->flashRedirect('route', 'home', [], 'success', 'Check-in berhasil! Selamat datang.');
         } catch (\Exception $e) {
-            // Log::error($e); // Sebaiknya log error
-            return back()->with('error', 'Terjadi kesalahan. Silakan coba pindai ulang.');
+            return $this->redirectError($e, 'Terjadi kesalahan saat pendaftaran. Silakan coba pindai ulang.');
         }
     }
 }
