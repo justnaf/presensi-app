@@ -83,7 +83,7 @@ const formatEventDate = (startDateStr: string, endDateStr: string): string => {
                 <h3 class="mt-2 text-sm font-semibold text-gray-900 dark:text-white">Tidak Ada Tiket</h3>
                 <p class="mt-1 text-sm text-gray-500">Anda belum terdaftar di kegiatan mana pun.</p>
                 <Link
-                    :href="route('user.events.index')"
+                    :href="route('activities.index')"
                     class="mt-4 inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
                 >
                     Cari Kegiatan

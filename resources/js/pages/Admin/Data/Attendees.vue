@@ -126,7 +126,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 v-if="selectedEventId"
                                 :href="exportUrl"
                                 target="_blank"
-                                class="inline-flex items-center gap-2 rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
+                                class="inline-flex items-center gap-2 rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-green-700 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-green-700"
                             >
                                 <FileSpreadsheet class="h-4 w-4" />
                                 Export Excel

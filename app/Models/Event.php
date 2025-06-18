@@ -84,4 +84,9 @@ class Event extends Model
         // jadi tidak perlu parameter tambahan.
         return $this->hasMany(EventAttendance::class);
     }
+
+    public function staticQrs(): HasMany
+    {
+        return $this->hasMany(EventStaticQr::class);
+    }
 }
