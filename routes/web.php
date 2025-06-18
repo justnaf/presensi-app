@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\Events\EventCategoryController;
 use App\Http\Controllers\Admin\Events\EventController;
+use App\Http\Controllers\User\EventController as UserEventController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -23,6 +24,8 @@ Route::group(['middleware' => ['auth', 'role:Administrator'], 'prefix' => 'admin
     Route::resource('users', UserController::class)->except(['create', 'store', 'show', 'edit']);
     Route::resource('event-categories', EventCategoryController::class)->except(['create', 'show', 'edit']);
     Route::resource('events', EventController::class)->except(['show']);
+    Route::patch('events/{event}/status', [EventController::class, 'updateStatus'])->name('events.update.status');
+
 
     require __DIR__ . '/settings.php';
 });
@@ -30,6 +33,12 @@ Route::group(['middleware' => ['auth', 'role:Administrator'], 'prefix' => 'admin
 // Grup untuk Dashboard Pengguna
 Route::group(['middleware' => ['auth'],], function () {
     Route::get('/dashboard', UserDashboardController::class)->name('dashboard');
+    Route::get('/activities', [UserEventController::class, 'index'])->name('activities.index');
+    Route::get('/histories/my-tickets', [UserEventController::class, 'myTickets'])->name('histories.my-tickets');
+    Route::get('/histories/my-tickets/attendances', [UserEventController::class, 'attendanceHistories'])->name('histories.my-tickets.attendances');
+    Route::get('/histories/my-tickets/{ticket}', [UserEventController::class, 'showTickets'])->name('histories.my-tickets.show');
+    Route::get('/activities/{event}', [UserEventController::class, 'show'])->name('activities.show');
+    Route::post('/activities/{event}/join', [UserEventController::class, 'join'])->name('activities.join');
     // ... rute pengguna lainnya di sini ...
 });
 

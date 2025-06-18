@@ -32,19 +32,31 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'username' => 'required|string|max:255|unique:' . User::class,
+            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
             'name' => $request->name,
+            'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
+        // Cek dan simpan file avatar jika ada
+        if ($request->hasFile('avatar')) {
+            // Simpan file di 'storage/app/public/avatars'
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $path;
+        }
 
-        Auth::login($user);
+        $user->save();
+
+        // Automatically assign the "Pengguna" role to the new user
+        $user->assignRole('Pengguna');
+
+        event(new Registered($user));
 
         return to_route('dashboard');
     }
