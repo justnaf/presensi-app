@@ -14,9 +14,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
-use App\Models\EventAttendee;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
 class EventController extends Controller
 {

@@ -5,7 +5,20 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, CalendarDays, CalendarPlus, LayoutGrid, Shield, Tag, University, User, UsersRound } from 'lucide-vue-next';
+import {
+    BookOpen,
+    CalendarDays,
+    CalendarPlus,
+    Database,
+    LayoutGrid,
+    QrCode,
+    Shield,
+    Tag,
+    Ticket,
+    University,
+    User,
+    UsersRound,
+} from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 // All navigation is now in one data structure
@@ -52,6 +65,23 @@ const mainNavItems: NavItem[] = [
                 title: 'Manage Events',
                 href: '/admin/events',
                 icon: CalendarPlus,
+            },
+            {
+                title: 'Manage Event QR Codes',
+                href: '/admin/events/qr-code',
+                icon: QrCode,
+            },
+        ],
+    },
+    {
+        title: 'Data Center',
+        href: '',
+        icon: Database,
+        children: [
+            {
+                title: 'Event Attendees',
+                href: '/admin/events/attendees',
+                icon: Ticket,
             },
         ],
     },
