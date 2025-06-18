@@ -65,9 +65,6 @@ const navigation = computed(() => [
                 <Link href="#" class="block rounded-md px-2 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
                     >Profil Saya</Link
                 >
-                <Link href="#" class="block rounded-md px-2 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-                    >Notifikasi</Link
-                >
                 <Link
                     :href="route('logout')"
                     method="post"

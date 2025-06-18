@@ -35,22 +35,35 @@ class DatabaseSeeder extends Seeder
         $penggunaRole = Role::create(['name' => 'Pengguna']);
 
         $permissions = [
-            'edit roles',
+
+            // Manajemen Dasar (Admin)
             'view roles',
-            'delete roles',
             'create roles',
+            'edit roles',
+            'delete roles',
+
             'view institutions',
+            'create institutions',
             'edit institutions',
             'delete institutions',
-            'create institutions',
-            'view events',
-            'edit events',
-            'delete events',
-            'create events',
+
             'view users',
+            'create users',
             'edit users',
             'delete users',
-            'create users',
+
+            'view events',
+            'create events',
+            'edit events',
+            'delete events',
+
+            // Manajemen Event Lanjutan (Admin)
+            'view attendance',
+            'export attendance',
+            'export event attendees',
+            'scan attendance',
+            'present qr-code',
+            'manage static qrs',
 
         ];
 
