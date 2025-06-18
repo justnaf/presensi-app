@@ -29,7 +29,6 @@ function cycleTheme() {
 const page = usePage();
 const navigation = computed(() => [
     { name: 'Beranda', href: route('dashboard'), icon: House, current: page.url.startsWith('/dashboard') },
-    // We assume the route for 'Aktivitas' is 'user.events.index' which corresponds to the '/events' URL
     { name: 'Aktivitas', href: route('activities.index'), icon: ClipboardList, current: page.url.startsWith('/activities') },
     { name: 'Ticket', href: route('histories.my-tickets'), icon: Ticket, current: page.url.startsWith('/histories') },
     { name: 'QR Scanner', href: '#', icon: QrCode, current: false },

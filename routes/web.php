@@ -11,8 +11,10 @@ use App\Http\Controllers\Admin\Events\EventCategoryController;
 use App\Http\Controllers\Admin\Events\EventController;
 use App\Http\Controllers\User\EventController as UserEventController;
 use App\Http\Controllers\Admin\Data\EventAttendeeController;
-use App\Http\Controllers\Admin\Events\QrPresenterController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\Admin\Events\ScannerController;
+use App\Http\Controllers\Admin\Events\StaticQrController;
+
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -30,11 +32,14 @@ Route::group(['middleware' => ['auth', 'role:Administrator'], 'prefix' => 'admin
     Route::resource('event-categories', EventCategoryController::class)->except(['create', 'show', 'edit']);
     Route::resource('events', EventController::class)->except(['show']);
     Route::patch('events/{event}/status', [EventController::class, 'updateStatus'])->name('events.update.status');
+    Route::get('/events/scanner', [ScannerController::class, 'index'])->name('events.scanner');
+    Route::post('/events/{event}/scan', [ScannerController::class, 'processScan'])->name('events.scan');
+    Route::get('/events/static-qrs', [StaticQrController::class, 'index'])->name('events.static-qrs.index');
+    Route::post('/events/{event}/static-qrs', [StaticQrController::class, 'store'])->name('events.static-qrs.store');
+    Route::delete('/events/static-qrs/{staticQr}', [StaticQrController::class, 'destroy'])->name('events.static-qrs.destroy');
+
     Route::get('events/attendees', [EventAttendeeController::class, 'showAttendees'])->name('events.attendees');
     Route::get('events/attendees/export', [EventAttendeeController::class, 'export'])->name('events.attendees.export');
-    Route::get('/events/qr-code', [QrPresenterController::class, 'index'])->name('events.qrcode.presenter');
-    Route::get('/events/{event}/check-scan', [QrPresenterController::class, 'checkScanStatus'])->name('events.qrcode.presenter.status');
-
 
     require __DIR__ . '/settings.php';
 });
