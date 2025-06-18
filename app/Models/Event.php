@@ -20,6 +20,7 @@ class Event extends Model
         'name',
         'description',
         'about',
+        'status',
         'location_name',
         'location_url',
         'longitude',

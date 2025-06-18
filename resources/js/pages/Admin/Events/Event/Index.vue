@@ -10,8 +10,10 @@ import { type BreadcrumbItem, FlashProps } from '@/types';
 import { Image } from 'lucide-vue-next';
 
 //================================================================
-// DEFINISI TIPE LOKAL UNTUK HALAMAN INI
+// DEFINISI TIPE LOKAL
 //================================================================
+type EventStatus = 'draft' | 'registration' | 'ongoing' | 'completed';
+
 interface EventCategory {
     id: number;
     name: string;
@@ -24,6 +26,7 @@ interface Event {
     start_date: string;
     end_date: string;
     type: string;
+    status: EventStatus;
     category: EventCategory | null;
 }
 
@@ -57,14 +60,12 @@ setTimeout(() => {
     watch(
         () => page.props as FlashProps,
         (flash) => {
-            console.log('Flash watcher triggered with:', flash);
             if (flash.flash?.success) success(flash.flash.success);
             if (flash.flash?.error) error(flash.flash.error);
         },
         { deep: true },
     );
 }, 100);
-
 const search = ref(props.filters.search);
 let searchTimer: ReturnType<typeof setTimeout>;
 watch(search, (value: string) => {
@@ -75,8 +76,26 @@ watch(search, (value: string) => {
 });
 
 //----------------------------------------------------------------
-// FUNGSI
+// STATE & FUNGSI DROPDOWN STATUS
 //----------------------------------------------------------------
+// Define the order of statuses for cycling
+const statusOrder: EventStatus[] = ['draft', 'registration', 'ongoing', 'completed'];
+
+const cycleStatus = (event: Event) => {
+    const currentIndex = statusOrder.indexOf(event.status);
+    // Cycle back to the beginning if it's the last status
+    const nextIndex = (currentIndex + 1) % statusOrder.length;
+    const newStatus = statusOrder[nextIndex];
+
+    router.patch(
+        route('admin.events.update.status', event.id),
+        { status: newStatus },
+        {
+            preserveScroll: true,
+        },
+    );
+};
+
 const handleDelete = (event: Event) => {
     confirmDelete(() => {
         router.delete(route('admin.events.destroy', event.id), {
@@ -86,8 +105,25 @@ const handleDelete = (event: Event) => {
 };
 
 //----------------------------------------------------------------
-// DATA LAIN
+// FUNGSI FORMAT & DATA LAIN
 //----------------------------------------------------------------
+const statusBadgeClass = (status: EventStatus) => {
+    return {
+        draft: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
+        registration: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+        ongoing: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+        completed: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
+    }[status];
+};
+
+const formatEventDate = (startDateStr: string, endDateStr: string): string => {
+    const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+    const startDate = new Date(startDateStr);
+    const endDate = new Date(endDateStr);
+    if (startDate.getTime() === endDate.getTime()) return startDate.toLocaleDateString('id-ID', options);
+    return `${startDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} - ${endDate.toLocaleDateString('id-ID', options)}`;
+};
+
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Manajemen Event', href: route('admin.events.index') },
     { title: 'Daftar Event', href: route('admin.events.index') },
@@ -109,7 +145,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 v-model="search"
                                 type="text"
                                 placeholder="Cari event..."
-                                class="block w-full rounded-md border-gray-300 bg-white p-2 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:w-64 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:focus:border-indigo-600 dark:focus:ring-indigo-600"
+                                class="block w-full rounded-md border-gray-300 bg-white p-2 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:w-64 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:focus:border-indigo-600"
                             />
                             <Link
                                 :href="route('admin.events.create')"
@@ -120,13 +156,16 @@ const breadcrumbs: BreadcrumbItem[] = [
                         </div>
                     </div>
 
-                    <!-- Tabel Event -->
-                    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                    <!--
+                      FIX: 'overflow-x-auto' dihapus dari div ini untuk mencegah dropdown terpotong.
+                      'relative' juga dihapus karena tidak lagi diperlukan untuk overflow.
+                    -->
+                    <div class="shadow-md sm:rounded-lg">
                         <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
                             <thead class="bg-gray-50 text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
                                     <th scope="col" class="px-6 py-3">Nama Event</th>
-                                    <th scope="col" class="px-6 py-3">Kategori</th>
+                                    <th scope="col" class="px-6 py-3">Status</th>
                                     <th scope="col" class="px-6 py-3">Tanggal</th>
                                     <th scope="col" class="px-6 py-3">Tipe</th>
                                     <th scope="col" class="px-6 py-3"><span class="sr-only">Actions</span></th>
@@ -147,6 +186,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                                                 v-if="event.poster_image"
                                                 :src="`/storage/${event.poster_image}`"
                                                 class="h-10 w-10 rounded-md object-cover"
+                                                alt="Event Poster"
                                             />
                                             <div
                                                 v-else
@@ -154,23 +194,26 @@ const breadcrumbs: BreadcrumbItem[] = [
                                             >
                                                 <Image class="h-5 w-5 text-gray-400" />
                                             </div>
-                                            <span class="font-medium text-gray-900 dark:text-white">{{ event.name }}</span>
+                                            <div>
+                                                <div class="font-medium text-gray-900 dark:text-white">{{ event.name }}</div>
+                                                <div class="text-xs text-gray-500 dark:text-gray-400">
+                                                    {{ event.category?.name || 'Tanpa Kategori' }}
+                                                </div>
+                                            </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <span
-                                            v-if="event.category"
-                                            class="rounded bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                                        <!-- Interactive Cycling Status Badge -->
+                                        <button
+                                            @click="cycleStatus(event)"
+                                            type="button"
+                                            class="rounded-full px-2.5 py-1 text-xs font-semibold capitalize transition-transform duration-150 hover:scale-105 active:scale-100"
+                                            :class="statusBadgeClass(event.status)"
                                         >
-                                            {{ event.category.name }}
-                                        </span>
-                                        <span v-else class="text-gray-400">-</span>
+                                            {{ event.status }}
+                                        </button>
                                     </td>
-                                    <td class="px-6 py-4">
-                                        {{
-                                            new Date(event.start_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
-                                        }}
-                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">{{ formatEventDate(event.start_date, event.end_date) }}</td>
                                     <td class="px-6 py-4">{{ event.type }}</td>
                                     <td class="space-x-2 px-6 py-4 text-right whitespace-nowrap">
                                         <Link

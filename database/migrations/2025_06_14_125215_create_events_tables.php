@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->text('about')->nullable();
+            $table->enum('status', ['draft', 'registration', 'ongoing', 'completed'])->default('draft');
             $table->string('location_name')->nullable();
             $table->string('location_url')->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
@@ -54,7 +55,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
             $table->string('ticket_code')->unique();
-            $table->string('barcode')->unique();
             $table->timestamp('registered_at')->useCurrent();
             $table->timestamps();
         });
@@ -64,6 +64,7 @@ return new class extends Migration
             $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('attendee_id')->nullable()->constrained('event_attendees')->onDelete('set null');
+            $table->string('scanned_barcode_value')->nullable()->unique();
             $table->timestamp('scanned_at')->useCurrent();
             $table->string('location')->nullable();
             $table->string('name')->nullable(); // untuk barcode mode

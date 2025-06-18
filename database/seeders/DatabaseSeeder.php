@@ -43,12 +43,30 @@ class DatabaseSeeder extends Seeder
             'edit institutions',
             'delete institutions',
             'create institutions',
+            'view events',
+            'edit events',
+            'delete events',
+            'create events',
+            'view users',
+            'edit users',
+            'delete users',
+            'create users',
+
+        ];
+
+        $userPermissions = [
+            'join activities',
+            'view activities',
         ];
 
         foreach ($permissions as $perm) {
             Permission::firstOrCreate(['name' => $perm]);
         }
+        foreach ($userPermissions as $userperm) {
+            Permission::firstOrCreate(['name' => $userperm]);
+        }
         // Sync all permissions to the admin role
+        $penggunaRole->syncPermissions($userPermissions);
         $admin->syncPermissions(Permission::all());
         $adminUser->assignRole($admin);
         $penggunaUser->assignRole($penggunaRole);

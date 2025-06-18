@@ -5,6 +5,7 @@ import L, { LatLng, Map, Marker } from 'leaflet'; // Impor Leaflet
 import { Image } from 'lucide-vue-next';
 import { computed, onMounted, ref, watch } from 'vue';
 
+// Impor ikon Leaflet secara langsung untuk memperbaiki path
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -14,7 +15,7 @@ import useSweetAlert from '@/composables/useSweetAlert';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem, FlashProps } from '@/types';
 
-// 2. Konfigurasi ulang path ikon default Leaflet SEBELUM peta diinisialisasi
+// Konfigurasi ulang path ikon default Leaflet
 L.Icon.Default.mergeOptions({
     iconUrl: markerIcon,
     iconRetinaUrl: markerIcon2x,
@@ -60,10 +61,14 @@ interface PageProps {
     event?: EventData; // event bersifat opsional (ada saat edit)
     categories: EventCategory[];
 }
+
 //----------------------------------------------------------------
 // PROPS & SETUP
 //----------------------------------------------------------------
 const props = defineProps<PageProps>();
+
+// `isUpdating` secara cerdas memeriksa apakah data 'event' dikirim dari controller.
+// Ini adalah kunci yang membedakan mode 'Edit' dan 'Create'.
 const isUpdating = computed(() => !!props.event);
 
 const { success, error } = useSweetAlert();
@@ -98,6 +103,7 @@ const form = useForm({
     category_id: props.event?.category_id ?? null,
     type: props.event?.type ?? '',
     attendance_mode: props.event?.attendance_mode ?? 'ticketing',
+    // Inisialisasi rundown sebagai array kosong jika membuat baru
     rundowns: (props.event?.rundowns ?? []) as any[],
 });
 
@@ -135,7 +141,8 @@ let marker: Marker | null = null;
 const defaultCoords: LatLng = new LatLng(-7.339665, 110.501534); // Titik default (Secang, Jateng)
 
 const initMap = () => {
-    const initialCoords = form.latitude && form.longitude ? new LatLng(form.latitude, form.longitude) : defaultCoords;
+    // Pengecekan `!= null` memastikan koordinat 0 tetap valid
+    const initialCoords = form.latitude != null && form.longitude != null ? new LatLng(form.latitude, form.longitude) : defaultCoords;
 
     map = L.map('map-container').setView(initialCoords, 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -158,8 +165,18 @@ const initMap = () => {
     });
 };
 
+// Watcher untuk menyinkronkan input manual Lat/Lng ke peta
+watch([() => form.latitude, () => form.longitude], ([newLat, newLng]) => {
+    if (newLat != null && newLng != null && marker) {
+        const newPos = new LatLng(newLat, newLng);
+        if (!marker.getLatLng().equals(newPos)) {
+            marker.setLatLng(newPos);
+            map?.panTo(newPos);
+        }
+    }
+});
+
 onMounted(() => {
-    // Inisialisasi peta setelah komponen di-mount
     initMap();
 });
 
@@ -169,7 +186,7 @@ onMounted(() => {
 const submit = () => {
     const url = isUpdating.value ? route('admin.events.update', props.event!.id) : route('admin.events.store');
     form.post(url, {
-        onError: (errors) => {
+        onError: () => {
             error('Terdapat kesalahan pada input Anda. Silakan periksa kembali.');
         },
     });
@@ -184,7 +201,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 <template>
     <Head>
         <title>{{ isUpdating ? 'Edit Event' : 'Tambah Event' }}</title>
-        <!-- Tambahkan CSS Leaflet ke halaman ini -->
         <link
             rel="stylesheet"
             href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"

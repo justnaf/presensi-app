@@ -27,7 +27,7 @@ class StoreEventRequest extends FormRequest
             'category_id' => 'nullable|exists:event_categories,id',
             'type' => 'required|string|max:255',
             'attendance_mode' => 'required|in:ticketing,barcode',
-
+            'status' => 'in:draft,registration,ongoing,completed',
             'longitude' => 'nullable|numeric',
             'latitude' => 'nullable|numeric',
             // Validation for an array of rundowns

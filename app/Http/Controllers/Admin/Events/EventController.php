@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\EventAttendee;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class EventController extends Controller
 {
@@ -24,7 +27,7 @@ class EventController extends Controller
         // Apply permissions for each action
         $this->middleware('permission:view events', ['only' => ['index']]);
         $this->middleware('permission:create events', ['only' => ['create', 'store']]);
-        $this->middleware('permission:edit events', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:edit events', ['only' => ['edit', 'update', 'updateStatus']]);
         $this->middleware('permission:delete events', ['only' => ['destroy']]);
     }
 
@@ -88,7 +91,7 @@ class EventController extends Controller
 
         // FIX: Pindahkan redirect sukses ke sini, di luar blok try...catch.
         // Baris ini hanya akan tercapai jika transaksi berhasil.
-        return $this->redirectSuccess('admin.events.index', 'Event created successfully.');
+        return $this->redirectSuccess('admin.events.index',  "Event created successfully.");
     }
 
     /**
@@ -163,7 +166,7 @@ class EventController extends Controller
         }
 
         // FIX: Pindahkan redirect sukses ke sini.
-        return $this->redirectSuccess('admin.events.index', 'Event updated successfully.');
+        return $this->redirectSuccess('admin.events.index',  'Event updated successfully.');
     }
 
     /**
@@ -172,7 +175,6 @@ class EventController extends Controller
     public function destroy(Event $event): RedirectResponse
     {
         try {
-            // Delete the poster image from storage if it exists
             if ($event->poster_image) {
                 Storage::disk('public')->delete($event->poster_image);
             }
@@ -180,6 +182,23 @@ class EventController extends Controller
             return $this->redirectSuccess('admin.events.index', 'Event deleted successfully.');
         } catch (\Exception $e) {
             return $this->redirectError($e, 'Failed to delete event.');
+        }
+    }
+
+    /**
+     * Update only the status of a specific event.
+     */
+    public function updateStatus(Request $request, Event $event): \Illuminate\Http\RedirectResponse
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:draft,registration,ongoing,completed',
+        ]);
+
+        try {
+            $event->update(['status' => $validated['status']]);
+            return back()->with('success', 'Status event berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return $this->redirectError($e, 'Gagal memperbarui status event.');
         }
     }
 }
