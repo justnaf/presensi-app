@@ -16,9 +16,10 @@ use App\Http\Controllers\Admin\Events\ScannerController;
 use App\Http\Controllers\Admin\Events\StaticQrController;
 
 
-Route::get('/', function () {
-    return Inertia::render('Welcome');
-})->name('home');
+Route::get('/', [PublicController::class, 'welcome'])->name('home');
+Route::get('/tentang-kami', [PublicController::class, 'about'])->name('tentang.kami');
+Route::get('/kegiatan', [PublicController::class, 'indexActivities'])->name('kegiatan');
+Route::get('/kegiatan/{kegiatan}', [PublicController::class, 'showActivities'])->name('kegiatan.show');
 
 Route::get('/check-in', [PublicController::class, 'showCheckInForm'])->name('public.checkin.form');
 Route::post('/check-in', [PublicController::class, 'processCheckIn'])->name('public.checkin.process');

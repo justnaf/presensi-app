@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Traits\RedirectsWithFlash;
 use App\Models\Event;
 use App\Models\EventAttendance;
+use App\Models\EventAttendee;
 use App\Models\EventStaticQr;
 use App\Models\Institution; // 1. Import the Institution model
 use Illuminate\Http\RedirectResponse;
@@ -19,6 +20,85 @@ class PublicController extends Controller
 {
     use RedirectsWithFlash;
 
+    /**
+     * Display the public welcome/landing page.
+     */
+    public function welcome(): Response
+    {
+        // Fetch the 3 latest events open for registration
+        $events = Event::where('status', 'registration')->orWhere('status', 'ongoing')
+            ->select('id', 'name', 'poster_image', 'start_date', 'end_date', 'status')
+            ->latest()
+            ->take(3)
+            ->get();
+
+        return Inertia::render('Public/Welcome', [
+            'events' => $events,
+        ]);
+    }
+
+    public function about(): Response
+    {
+        return Inertia::render('Public/About');
+    }
+    /**
+     * Menampilkan halaman indeks semua event publik.
+     */
+    public function indexActivities(): Response
+    {
+        $selectFields = ['id', 'name', 'poster_image', 'start_date', 'end_date', 'status', 'attendance_mode'];
+
+        // Ambil semua event yang sedang berlangsung
+        $ongoingEvents = Event::where('status', 'ongoing')
+            ->select($selectFields)
+            ->orderBy('start_date', 'asc')
+            ->get();
+
+        // Ambil event mendatang dengan mode barcode
+        $upcomingBarcodeEvents = Event::where('status', 'registration')
+            ->where('attendance_mode', 'barcode')
+            ->select($selectFields)
+            ->orderBy('start_date', 'asc')
+            ->get();
+
+        // Ambil event mendatang dengan mode ticketing
+        $upcomingTicketingEvents = Event::where('status', 'registration')
+            ->where('attendance_mode', 'ticketing')
+            ->select($selectFields)
+            ->orderBy('start_date', 'asc')
+            ->get();
+
+        return Inertia::render('Public/Events/Index', [
+            'ongoingEvents' => $ongoingEvents,
+            'upcomingBarcodeEvents' => $upcomingBarcodeEvents,
+            'upcomingTicketingEvents' => $upcomingTicketingEvents,
+        ]);
+    }
+    public function showActivities(Event $kegiatan): Response
+    {
+        // Abort if the event is still a draft
+        if ($kegiatan->status === 'draft') {
+            abort(404);
+        }
+
+        // Eager load all necessary relationships
+        $kegiatan->load(['category:id,name', 'rundowns' => function ($query) {
+            $query->orderBy('start_time', 'asc');
+        }]);
+
+        // Check if the current user is already registered
+        $isRegistered = false;
+        if (Auth::check()) {
+            $isRegistered = EventAttendee::where('event_id', $kegiatan->id)
+                ->where('user_id', Auth::id())
+                ->exists();
+        }
+
+        return Inertia::render('Public/Events/Show', [
+            'event' => $kegiatan,
+            'isRegistered' => $isRegistered,
+        ]);
+    }
     /**
      * Shows the check-in form after a user scans a static QR code.
      */

@@ -35,6 +35,7 @@ class RegisteredUserController extends Controller
             'username' => 'required|string|max:255|unique:' . User::class,
             'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'institution_id' => 'required|exists:institutions,id',
         ]);
 
         $user = User::create([
@@ -52,6 +53,9 @@ class RegisteredUserController extends Controller
         }
 
         $user->save();
+
+        // 4. Attach the selected institution to the new user
+        $user->institutions()->attach($request->institution_id);
 
         // Automatically assign the "Pengguna" role to the new user
         $user->assignRole('Pengguna');

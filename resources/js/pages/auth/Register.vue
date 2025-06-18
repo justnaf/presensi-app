@@ -9,19 +9,32 @@ import { Head, useForm } from '@inertiajs/vue3';
 import { LoaderCircle, User } from 'lucide-vue-next';
 import { ref } from 'vue';
 
+// 1. Definisikan tipe untuk props institusi
+interface Institution {
+    id: number;
+    name: string;
+}
+interface PageProps {
+    institutions: Institution[];
+}
+
+// 2. Terima props institutions dari controller
+const props = defineProps<PageProps>();
+
 const form = useForm({
     name: '',
-    username: '', // Add username
+    username: '',
     email: '',
     password: '',
     password_confirmation: '',
-    avatar: null as File | null, // Add avatar
+    avatar: null as File | null,
+    institution_id: null as number | null, // Tambahkan institution_id ke form
 });
 
-// State for the avatar preview
+// State untuk pratinjau avatar
 const avatarPreview = ref<string | null>(null);
 
-// Handle file input changes for the avatar
+// Fungsi untuk menangani unggahan avatar
 function handleAvatarChange(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
@@ -43,10 +56,10 @@ const submit = () => {
 
         <form @submit.prevent="submit" class="flex flex-col gap-6">
             <div class="grid gap-4">
-                <!-- Avatar Input Section -->
+                <!-- Bagian Input Avatar -->
                 <div class="flex flex-col items-center gap-2">
-                    <Label for="avatar-upload">
-                        <div class="relative h-24 w-24 cursor-pointer rounded-full">
+                    <Label for="avatar-upload" class="cursor-pointer">
+                        <div class="relative h-24 w-24 rounded-full">
                             <img v-if="avatarPreview" :src="avatarPreview" alt="Avatar Preview" class="h-full w-full rounded-full object-cover" />
                             <div v-else class="flex h-full w-full items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800">
                                 <User class="h-12 w-12 text-neutral-400" />
@@ -68,7 +81,6 @@ const submit = () => {
                     <InputError :message="form.errors.name" />
                 </div>
 
-                <!-- Username Input -->
                 <div class="grid gap-2">
                     <Label for="username">Username</Label>
                     <Input id="username" type="text" required v-model="form.username" placeholder="Username" />
@@ -79,6 +91,23 @@ const submit = () => {
                     <Label for="email">Email address</Label>
                     <Input id="email" type="email" required autocomplete="email" v-model="form.email" placeholder="email@example.com" />
                     <InputError :message="form.errors.email" />
+                </div>
+
+                <!-- Dropdown Institusi -->
+                <div class="grid gap-2">
+                    <Label for="institution_id">Institution</Label>
+                    <select
+                        id="institution_id"
+                        v-model="form.institution_id"
+                        required
+                        class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                    >
+                        <option :value="null" disabled>-- Pilih institusi Anda --</option>
+                        <option v-for="institution in institutions" :key="institution.id" :value="institution.id">
+                            {{ institution.name }}
+                        </option>
+                    </select>
+                    <InputError :message="form.errors.institution_id" />
                 </div>
 
                 <div class="grid gap-2">
