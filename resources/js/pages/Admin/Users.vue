@@ -188,7 +188,7 @@ const breadcrumbs: BreadcrumbItem[] = [{ title: 'Manajemen Pengguna', href: rout
                                 >
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-4">
-                                            <img v-if="user.avatar" :src="user.avatar" class="h-10 w-10 rounded-full object-cover" />
+                                            <img v-if="user.avatar" :src="`/storage/${user.avatar}`" class="h-10 w-10 rounded-full object-cover" />
                                             <div v-else class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -269,7 +269,7 @@ const breadcrumbs: BreadcrumbItem[] = [{ title: 'Manajemen Pengguna', href: rout
                     class="relative w-full max-w-lg transform overflow-hidden rounded-lg bg-white p-6 text-left shadow-xl transition-all dark:bg-gray-800"
                 >
                     <div class="flex items-start gap-4">
-                        <img v-if="selectedUser?.avatar" :src="selectedUser.avatar" class="h-24 w-24 rounded-lg object-cover" />
+                        <img v-if="selectedUser?.avatar" :src="`/storage/${selectedUser.avatar}`" class="h-24 w-24 rounded-lg object-cover" />
                         <div v-else class="flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
