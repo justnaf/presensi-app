@@ -34,7 +34,7 @@ return new class extends Migration
             $table->integer('max_attendees')->default(0);
             $table->date('start_date');
             $table->date('end_date');
-            $table->foreignId('category_id')->constrained('event_categories')->onDelete('set null')->nullable();
+            $table->foreignId('category_id')->nullable()->constrained('event_categories')->onDelete('set null');
             $table->string('type');
             $table->enum('attendance_mode', ['ticketing', 'barcode']);
             $table->timestamps();
