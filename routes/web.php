@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\Events\EventCategoryController;
 use App\Http\Controllers\Admin\Events\EventController;
 use App\Http\Controllers\User\EventController as UserEventController;
 use App\Http\Controllers\Admin\Data\EventAttendeeController;
+use App\Http\Controllers\Admin\Data\EventAttendanceController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\Admin\Events\ScannerController;
 use App\Http\Controllers\Admin\Events\StaticQrController;
@@ -39,8 +40,11 @@ Route::group(['middleware' => ['auth', 'role:Administrator'], 'prefix' => 'admin
     Route::post('/events/{event}/static-qrs', [StaticQrController::class, 'store'])->name('events.static-qrs.store');
     Route::delete('/events/static-qrs/{staticQr}', [StaticQrController::class, 'destroy'])->name('events.static-qrs.destroy');
 
-    Route::get('events/attendees', [EventAttendeeController::class, 'showAttendees'])->name('events.attendees');
-    Route::get('events/attendees/export', [EventAttendeeController::class, 'export'])->name('events.attendees.export');
+    Route::get('/data/attendees', [EventAttendeeController::class, 'showAttendees'])->name('data.attendees');
+    Route::get('/data/attendees/export', [EventAttendeeController::class, 'export'])->name('data.attendees.export');
+
+    Route::get('/data/attendances', [EventAttendanceController::class, 'index'])->name('data.attendances.index');
+    Route::get('/data/attendances/export', [EventAttendanceController::class, 'export'])->name('data.attendances.export');
 
     require __DIR__ . '/settings.php';
 });

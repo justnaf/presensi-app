@@ -58,14 +58,14 @@ const exportUrl = computed(() => {
         return '#';
     }
     // Jika ada event yang dipilih, buat route yang benar
-    return route('admin.events.attendees.export', { event_id: selectedEventId.value });
+    return route('admin.data.attendees.export', { event_id: selectedEventId.value });
 });
 // --- END: Kode yang ditambahkan ---
 
 // Fungsi untuk memuat ulang data saat filter berubah
 const reload = () => {
     router.get(
-        route('admin.events.attendees'),
+        route('admin.data.attendees'),
         {
             event_id: selectedEventId.value,
             search: search.value,
@@ -106,7 +106,7 @@ const formatDateTime = (dateTimeStr: string): string => {
 //----------------------------------------------------------------
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Manajemen Event', href: '#' },
-    { title: 'Daftar Peserta', href: route('admin.events.attendees') },
+    { title: 'Daftar Peserta', href: route('admin.data.attendees') },
 ];
 </script>
 

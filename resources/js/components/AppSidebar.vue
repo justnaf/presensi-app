@@ -18,6 +18,7 @@ import {
     Ticket,
     University,
     User,
+    UserCheck,
     UsersRound,
 } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
@@ -86,8 +87,13 @@ const mainNavItems: NavItem[] = [
         children: [
             {
                 title: 'Event Attendees',
-                href: '/admin/events/attendees',
+                href: '/admin/data/attendees',
                 icon: Ticket,
+            },
+            {
+                title: 'Event Attendences',
+                href: '/admin/data/attendances',
+                icon: UserCheck,
             },
         ],
     },
