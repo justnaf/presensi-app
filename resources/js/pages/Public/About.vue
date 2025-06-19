@@ -134,7 +134,6 @@ onMounted(() => {
                                                 ><strong class="font-semibold text-gray-900 dark:text-white">Telepon:</strong><br />(0293)
                                                 3643-889</span
                                             >
-                                            >
                                         </li>
                                         <li class="flex gap-x-3">
                                             <Mail class="mt-1 h-5 w-5 flex-none text-indigo-600 dark:text-indigo-400" />
