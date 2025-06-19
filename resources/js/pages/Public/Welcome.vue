@@ -60,7 +60,7 @@ const statusBadge = computed(() => (status: EventStatus) => {
     <PublicLayout>
         <!-- Jumbotron / Hero Section -->
         <div
-            class="relative isolate overflow-hidden bg-gray-500 px-6 pt-16 shadow-2xl sm:px-16 md:pt-24 lg:flex lg:gap-x-20 lg:px-24 lg:pt-0 dark:bg-gray-900"
+            class="relative isolate overflow-hidden bg-gray-500 px-6 pt-20 shadow-2xl sm:px-16 md:pt-24 lg:flex lg:gap-x-20 lg:px-24 lg:pt-0 dark:bg-gray-900"
         >
             <div class="mx-auto max-w-md text-center lg:mx-0 lg:flex-shrink-0 lg:py-32 lg:text-left">
                 <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">Temukan & Ikuti Kegiatan Favoritmu</h1>

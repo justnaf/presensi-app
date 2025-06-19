@@ -81,7 +81,7 @@ const navigationItems = computed(() => [
                         <AppLogo />
                     </Link>
                 </div>
-                <div class="flex lg:hidden">
+                <div class="flex space-x-2 lg:hidden">
                     <button
                         @click="cycleTheme"
                         class="flex items-center gap-2 rounded-lg bg-white/10 p-1.5 pr-3 text-sm font-medium text-white transition-colors hover:bg-white/20 focus:ring-2 focus:ring-white/50 focus:outline-none"
