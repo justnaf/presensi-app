@@ -83,6 +83,15 @@ const navigationItems = computed(() => [
                 </div>
                 <div class="flex lg:hidden">
                     <button
+                        @click="cycleTheme"
+                        class="flex items-center gap-2 rounded-lg bg-white/10 p-1.5 pr-3 text-sm font-medium text-white transition-colors hover:bg-white/20 focus:ring-2 focus:ring-white/50 focus:outline-none"
+                    >
+                        <div class="rounded-md bg-white/20 p-1 shadow-sm">
+                            <component :is="currentTheme.Icon" class="h-5 w-5" />
+                        </div>
+                        <span>{{ currentTheme.label }}</span>
+                    </button>
+                    <button
                         type="button"
                         @click="isMobileMenuOpen = true"
                         class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-400"
