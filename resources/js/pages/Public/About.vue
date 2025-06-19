@@ -29,12 +29,12 @@ const teamMembers = [
     {
         name: 'Ahmad Arief Prasetyo',
         role: 'SysSquad',
-        imageUrl: 'https://kajian.snafcat.com/dev/ahmad-arief.jpeg',
+        imageUrl: 'https://raw.githubusercontent.com/justnaf/presensi-app/refs/heads/main/public/dev/ahmad-arief.jpeg',
     },
     {
         name: 'Novi',
         role: 'HappyDesk',
-        imageUrl: 'https://kajian.snafcat.com/dev/novi.jpeg',
+        imageUrl: 'https://raw.githubusercontent.com/justnaf/presensi-app/refs/heads/main/public/dev/novi.jpeg',
     },
 ];
 
