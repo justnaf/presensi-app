@@ -69,7 +69,7 @@ const statusBadge = computed(() => (status: EventStatus) => {
                 </p>
                 <div class="mt-10 flex items-center justify-center gap-x-6 lg:justify-start">
                     <Link
-                        :href="route('activities.index')"
+                        :href="route('kegiatan')"
                         class="rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400"
                         >Cari Kegiatan</Link
                     >
