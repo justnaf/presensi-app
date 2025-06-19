@@ -68,10 +68,10 @@ const statusBadge = computed(() => (status: EventStatus) => {
                     Platform manajemen event modern untuk pendaftaran yang mudah, absensi cepat, dan pengalaman tak terlupakan.
                 </p>
                 <div class="mt-10 flex items-center justify-center gap-x-6 lg:justify-start">
-                    <a
-                        href="#"
+                    <Link
+                        :href="route('activities.index')"
                         class="rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400"
-                        >Cari Kegiatan</a
+                        >Cari Kegiatan</Link
                     >
                     <Link :href="route('register')" class="text-sm leading-6 font-semibold text-white"
                         >Daftar Akun <span aria-hidden="true">→</span></Link
