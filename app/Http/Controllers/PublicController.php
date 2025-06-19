@@ -141,7 +141,7 @@ class PublicController extends Controller
     {
         // 1. Correctly validate all fields sent from the form
         $validated = $request->validate([
-            'name' => 'required_if:is_guest,true|string|max:255',
+            'name' => 'required_if:is_guest,true|string|max:255|nullable',
             'is_guest' => 'required|boolean',
             'code' => 'required|string|uuid|exists:event_static_qrs,code',
             'event_id' => 'required|exists:events,id',
