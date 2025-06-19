@@ -27,13 +27,13 @@ const teamMembers = [
         imageUrl: 'https://avatars.githubusercontent.com/u/33770553?v=4',
     },
     {
-        name: 'Arief',
-        role: 'Oprasional',
+        name: 'Ahmad Arief Prasetyo',
+        role: 'SysSquad',
         imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=300',
     },
     {
         name: 'Novi',
-        role: 'Customer Care',
+        role: 'HappyDesk',
         imageUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=300',
     },
 ];
@@ -57,7 +57,7 @@ onMounted(() => {
     <Head title="Tentang Kami" />
     <PublicLayout>
         <!-- Jumbotron Section -->
-        <div class="relative isolate overflow-hidden bg-gray-900 px-6 py-24 text-center shadow-2xl sm:px-16 sm:py-32">
+        <div class="relative isolate overflow-hidden bg-gray-500 px-6 py-24 text-center shadow-2xl sm:px-16 sm:py-32 dark:bg-gray-900">
             <h1 class="mx-auto max-w-2xl text-3xl font-bold tracking-tight text-white sm:text-4xl">Tentang Kami & Kontak</h1>
             <p class="mx-auto mt-6 max-w-xl text-lg leading-8 text-gray-300">
                 Mengenal lebih dekat siapa kami, visi kami, dan bagaimana Anda bisa terhubung dengan kami.
@@ -132,7 +132,7 @@ onMounted(() => {
                                             <Phone class="mt-1 h-5 w-5 flex-none text-indigo-600 dark:text-indigo-400" />
                                             <span
                                                 ><strong class="font-semibold text-gray-900 dark:text-white">Telepon:</strong><br />(0293)
-                                                363-346</span
+                                                3643-889</span
                                             >
                                             >
                                         </li>
@@ -140,9 +140,9 @@ onMounted(() => {
                                             <Mail class="mt-1 h-5 w-5 flex-none text-indigo-600 dark:text-indigo-400" />
                                             <span
                                                 ><strong class="font-semibold text-gray-900 dark:text-white">Email:</strong><br /><a
-                                                    href="mailto:pdmkotamgl@muhammadiyah.or.id"
+                                                    href="mailto:muhammadiyahkotamgl@gmail.com"
                                                     class="hover:text-indigo-600"
-                                                    >pdmkotamgl@muhammadiyah.or.id</a
+                                                    >muhammadiyahkotamgl@gmail.com</a
                                                 ></span
                                             >
                                         </li>

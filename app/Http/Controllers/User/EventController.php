@@ -28,34 +28,44 @@ class EventController extends Controller
 
     public function index(Request $request): Response
     {
-        // Fetch ongoing events
+        // 1. Fetch ongoing and upcoming events (kode Anda sudah bagus)
         $ongoingEvents = Event::where('status', 'ongoing')
             ->select('id', 'name', 'poster_image', 'start_date', 'end_date', 'attendance_mode')
             ->orderBy('start_date', 'asc')
             ->get();
 
-        // Fetch upcoming events
         $upcomingEvents = Event::where('status', 'registration')
             ->select('id', 'name', 'poster_image', 'start_date', 'end_date', 'attendance_mode')
             ->orderBy('start_date', 'asc')
             ->get();
 
-        if (Auth::check() && $upcomingEvents->isNotEmpty()) {
-            // Get the IDs of all upcoming events
-            $upcomingEventIds = $upcomingEvents->pluck('id');
+        // 2. Jika user login, tambahkan informasi tiket dan status registrasi
+        if (Auth::check()) {
+            // Gabungkan ID dari kedua jenis event untuk satu query efisien
+            $allEventIds = $ongoingEvents->pluck('id')->merge($upcomingEvents->pluck('id'));
 
-            // Find which of these events the current user is already registered for in a single query
-            $registeredEventIds = EventAttendee::where('user_id', Auth::id())
-                ->whereIn('event_id', $upcomingEventIds)
-                ->pluck('event_id')
-                ->flip(); // Use flip() for fast O(1) lookups
+            if ($allEventIds->isNotEmpty()) {
+                // Ambil informasi tiket user dalam satu query.
+                // Hasilnya adalah koleksi: [event_id => ticket_id]
+                $userTicketsInfo = EventAttendee::where('user_id', Auth::id())
+                    ->whereIn('event_id', $allEventIds)
+                    ->pluck('id', 'event_id');
 
-            // Add the 'is_registered' attribute to each upcoming event
-            $upcomingEvents->each(function ($event) use ($registeredEventIds) {
-                $event->is_registered = $registeredEventIds->has($event->id);
-            });
+                // Fungsi untuk menambahkan atribut ke event
+                $addRegistrationInfo = function ($event) use ($userTicketsInfo) {
+                    // Cek apakah user terdaftar (apakah event_id ada di keys $userTicketsInfo)
+                    $event->is_registered = $userTicketsInfo->has($event->id);
+                    // Tambahkan user_ticket_id jika ada, jika tidak, nilainya null
+                    $event->user_ticket_id = $userTicketsInfo->get($event->id);
+                };
+
+                // Terapkan fungsi di atas ke kedua koleksi event
+                $ongoingEvents->each($addRegistrationInfo);
+                $upcomingEvents->each($addRegistrationInfo);
+            }
         }
 
+        // 3. Render view dengan data yang sudah diperkaya
         return Inertia::render('User/Activities/Index', [
             'ongoingEvents' => $ongoingEvents,
             'upcomingEvents' => $upcomingEvents,

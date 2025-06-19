@@ -19,6 +19,7 @@ interface EventCard {
     end_date: string;
     attendance_mode: AttendanceMode;
     is_registered?: boolean; // Add the new optional property
+    user_ticket_id?: number; // Add the optional user_ticket_id property
 }
 
 interface PageProps {
@@ -85,8 +86,8 @@ const formatEventDate = (startDateStr: string, endDateStr: string): string => {
                     </Link>
                     <div class="border-t border-gray-100 p-4 dark:border-gray-700">
                         <Link
-                            v-if="event.attendance_mode === 'ticketing'"
-                            :href="route('activities.show', event.id)"
+                            v-if="event.is_registered && event.attendance_mode === 'ticketing' && event.user_ticket_id"
+                            :href="route('histories.my-tickets.show', event.user_ticket_id)"
                             class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-green-500"
                         >
                             <Ticket class="h-4 w-4" />
@@ -94,7 +95,7 @@ const formatEventDate = (startDateStr: string, endDateStr: string): string => {
                         </Link>
                         <Link
                             v-else
-                            :href="route('activities.show', event.id)"
+                            :href="route('scanner')"
                             class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
                         >
                             <QrCode class="h-4 w-4" />
