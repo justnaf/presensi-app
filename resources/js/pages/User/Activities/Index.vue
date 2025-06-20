@@ -40,7 +40,7 @@ watch(
     },
     { deep: true },
 );
-const props = defineProps<PageProps>();
+defineProps<PageProps>();
 
 const formatEventDate = (startDateStr: string, endDateStr: string): string => {
     const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };

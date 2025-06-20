@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 // Semua logika dan impor yang berhubungan dengan Layout dipindahkan ke sini
 import AppLogo from '@/components/AppLogo.vue';
 import { useAppearance } from '@/composables/useAppearance';
@@ -10,6 +10,7 @@ import { computed, ref } from 'vue';
 const showHeaderNav = ref(false);
 
 // Logika untuk tema (dark mode)
+type Appearance = 'light' | 'dark' | 'system';
 const tabs = [
     { value: 'light', Icon: Sun, label: 'Light' },
     { value: 'dark', Icon: Moon, label: 'Dark' },
@@ -22,7 +23,7 @@ const currentTheme = computed(() => {
 function cycleTheme() {
     const currentIndex = tabs.findIndex((tab) => tab.value === appearance.value);
     const nextIndex = (currentIndex + 1) % tabs.length;
-    updateAppearance(tabs[nextIndex].value);
+    updateAppearance(tabs[nextIndex].value as Appearance);
 }
 
 // Logika untuk navigasi bawah (menandai yang aktif)

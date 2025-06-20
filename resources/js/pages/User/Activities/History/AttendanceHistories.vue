@@ -33,7 +33,7 @@ interface PageProps {
 //----------------------------------------------------------------
 // PROPS & SETUP
 //----------------------------------------------------------------
-const props = defineProps<PageProps>();
+defineProps<PageProps>();
 
 const formatDateTime = (dateTimeStr: string) => {
     const date = new Date(dateTimeStr);
@@ -105,8 +105,9 @@ const formatDateTime = (dateTimeStr: string) => {
                         class="mr-1 mb-1 rounded border px-4 py-2 text-sm hover:bg-white focus:border-indigo-500 focus:text-indigo-500 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
                         :class="{ 'bg-white font-bold dark:bg-gray-700': link.active }"
                         :href="link.url"
-                        v-html="link.label"
-                    />
+                    >
+                        <span v-html="link.label"
+                    /></Link>
                 </template>
             </div>
         </div>

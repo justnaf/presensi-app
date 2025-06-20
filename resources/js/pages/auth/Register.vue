@@ -19,7 +19,7 @@ interface PageProps {
 }
 
 // 2. Terima props institutions dari controller
-const props = defineProps<PageProps>();
+defineProps<PageProps>();
 
 const form = useForm({
     name: '',

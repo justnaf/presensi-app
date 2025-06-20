@@ -5,24 +5,10 @@ import { Head, Link } from '@inertiajs/vue3';
 //================================================================
 // DEFINISI TIPE LOKAL
 //================================================================
-type AttendanceMode = 'ticketing' | 'barcode';
-
-interface PageProps {}
 
 //----------------------------------------------------------------
 // PROPS & SETUP
 //----------------------------------------------------------------
-const props = defineProps<PageProps>();
-
-const formatEventDate = (startDateStr: string, endDateStr: string): string => {
-    const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
-    const startDate = new Date(startDateStr);
-    const endDate = new Date(endDateStr);
-    if (startDate.getTime() === endDate.getTime()) {
-        return startDate.toLocaleDateString('id-ID', options);
-    }
-    return `${startDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} - ${endDate.toLocaleDateString('id-ID', options)}`;
-};
 </script>
 
 <template>

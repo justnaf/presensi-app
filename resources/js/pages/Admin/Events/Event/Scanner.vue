@@ -15,7 +15,7 @@ interface PageProps {
     events: EventInfo[];
 }
 
-const props = defineProps<PageProps>();
+defineProps<PageProps>();
 
 const selectedEvent = ref<EventInfo | null>(null);
 const scannerInstance = ref<Html5QrcodeScanner | null>(null);

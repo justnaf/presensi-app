@@ -231,8 +231,9 @@ const breadcrumbs: BreadcrumbItem[] = [
                                     class="mr-1 mb-1 rounded border border-gray-300 px-4 py-3 text-sm leading-4 text-gray-700 hover:bg-gray-100 focus:border-indigo-500 focus:text-indigo-500 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
                                     :class="{ 'bg-indigo-50 font-bold text-indigo-600 dark:bg-gray-700 dark:text-white': link.active }"
                                     :href="link.url"
-                                    v-html="link.label"
-                                />
+                                >
+                                    <span v-html="link.label"
+                                /></Link>
                             </template>
                         </div>
                     </div>

@@ -25,7 +25,7 @@ interface PageProps {
 //----------------------------------------------------------------
 // PROPS & SETUP
 //----------------------------------------------------------------
-const props = defineProps<PageProps>();
+defineProps<PageProps>();
 
 const formatEventDate = (startDateStr: string, endDateStr: string): string => {
     const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
@@ -141,7 +141,7 @@ const statusBadge = computed(() => (status: EventStatus) => {
                 </div>
                 <div class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
                     <article v-for="event in events" :key="event.id" class="flex flex-col items-start justify-between">
-                        <Link href="#" class="w-full">
+                        <Link :href="route('kegiatan.show', { kegiatan: event.id })" class="w-full">
                             <div class="relative w-full">
                                 <img
                                     v-if="event.poster_image"

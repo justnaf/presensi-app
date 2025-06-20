@@ -4,7 +4,6 @@ import { Head, router, usePage } from '@inertiajs/vue3';
 import { computed, onMounted, ref } from 'vue';
 
 // Layout & Composables
-import useSweetAlert from '@/composables/useSweetAlert';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import Swal from 'sweetalert2'; // Import Swal untuk dialog kustom
 
@@ -69,7 +68,6 @@ interface PageProps {
 // PROPS & SETUP
 //----------------------------------------------------------------
 const props = defineProps<PageProps>();
-const { confirmDelete } = useSweetAlert();
 const activeTab = ref('about'); // State for the active tab
 
 // Dapatkan data user dari page props

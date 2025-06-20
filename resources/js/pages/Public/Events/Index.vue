@@ -28,7 +28,7 @@ interface PageProps {
 //----------------------------------------------------------------
 // SETUP
 //----------------------------------------------------------------
-const props = defineProps<PageProps>();
+defineProps<PageProps>();
 
 const splideOptions = {
     rewind: false,
