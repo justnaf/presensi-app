@@ -1,0 +1,1 @@
+import{d as o,a as e,o as s}from"./app-BFRaPBD9.js";const t={src:"logo/LogoSintesaOnly.svg",alt:"SINTESA"},p=o({inheritAttrs:!1,__name:"AppLogoIcon",props:{className:{}},setup(n){return(a,r)=>(s(),e("img",t))}});export{p as _};
