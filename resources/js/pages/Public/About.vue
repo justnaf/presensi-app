@@ -98,7 +98,7 @@ onMounted(() => {
                     <div
                         class="flex items-center justify-center">
                         <img :src="'logo/Logo_SintesaTeks.svg'"
-                            alt="SINTESA" class="w-12 h-12">
+                            alt="SINTESA" class="w-full">
                     </div>
                     <div>
                         <h2
