@@ -16,6 +16,7 @@ import 'leaflet/dist/leaflet.css';
 
 // Icon Imports
 import { Calendar, CheckCircle, ExternalLink, MapPin, Ticket, User, XCircle } from 'lucide-vue-next';
+import { log } from 'console';
 
 //================================================================
 // TYPE DEFINITIONS
@@ -156,8 +157,8 @@ onMounted(() => initMap());
         <meta property="og:title" :content="event.name" />
         <meta property="og:description"
             :content="event.description ?? undefined" />
-        <meta v-if="posterImageUrl" property="og:image"
-            :content="posterImageUrl" />
+        <meta property="og:image"
+            :content="posterImageUrl ?? undefined" />
         <meta property="og:url" :content="pageUrl" />
         <meta name="twitter:card"
             content="summary_large_image" />
