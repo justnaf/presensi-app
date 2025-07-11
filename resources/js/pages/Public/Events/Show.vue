@@ -157,8 +157,12 @@ onMounted(() => initMap());
         <meta property="og:title" :content="event.name" />
         <meta property="og:description"
             :content="event.description ?? undefined" />
-        <meta property="og:image"
-            :content="posterImageUrl ?? undefined" />
+        <meta v-if="posterImageUrl" property="og:image"
+            :content="posterImageUrl" />
+        <meta property="og:image:type"
+            content="image/jpeg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         <meta property="og:url" :content="pageUrl" />
         <meta name="twitter:card"
             content="summary_large_image" />
