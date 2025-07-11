@@ -71,7 +71,7 @@ const printQrCode = async (qr: StaticQr, event: EventInfo) => {
         margin: 2,
         errorCorrectionLevel: 'H',
     });
-    const appLogoHtml = await renderToString(h(AppLogoIcon, { class: 'h-8 w-8' }));
+    const appLogoHtml = await renderToString(h(AppLogoIcon));
     openPrintWindow(
         `
         <div class="ticket">
@@ -93,7 +93,7 @@ const printQrCode = async (qr: StaticQr, event: EventInfo) => {
 const printAllQrCodes = async (qrs: StaticQr[], event: EventInfo) => {
     if (!qrs || qrs.length === 0) return;
 
-    const appLogoHtml = await renderToString(h(AppLogoIcon, { class: 'h-8 w-8' }));
+    const appLogoHtml = await renderToString(h(AppLogoIcon));
 
     // Generate all QR code data URLs in parallel for better performance
     const qrCodePromises = qrs.map((qr) =>
@@ -212,82 +212,109 @@ const breadcrumbs: BreadcrumbItem[] = [
 </script>
 
 <template>
+
     <Head title="Manajemen QR Code Statis" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <!-- Dropdown Pemilihan Event -->
-                <div class="mb-8 overflow-hidden bg-white p-6 shadow-sm sm:rounded-lg dark:bg-gray-800">
-                    <label for="event-select" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Pilih Event untuk Dikelola</label>
-                    <select
-                        v-model="selectedEventId"
+                <div
+                    class="mb-8 overflow-hidden bg-white p-6 shadow-sm sm:rounded-lg dark:bg-gray-800">
+                    <label for="event-select"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Pilih
+                        Event untuk Dikelola</label>
+                    <select v-model="selectedEventId"
                         id="event-select"
-                        class="mt-1 block w-full rounded-md border-gray-300 p-2 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300"
-                    >
-                        <option value="">-- Silakan Pilih Event --</option>
-                        <option v-for="event in events" :key="event.id" :value="event.id">{{ event.name }}</option>
+                        class="mt-1 block w-full rounded-md border-gray-300 p-2 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                        <option value="">-- Silakan Pilih
+                            Event --</option>
+                        <option v-for="event in events"
+                            :key="event.id"
+                            :value="event.id">{{ event.name
+                            }}</option>
                     </select>
                 </div>
 
                 <!-- Konten ditampilkan setelah event dipilih -->
                 <div v-if="selectedEvent" class="space-y-8">
                     <!-- Form Tambah QR -->
-                    <div class="overflow-hidden bg-white p-6 shadow-sm sm:rounded-lg dark:bg-gray-800">
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Buat QR Code Baru untuk: {{ selectedEvent.name }}</h3>
-                        <form @submit.prevent="submitNewQr" class="mt-4 flex items-end gap-4">
+                    <div
+                        class="overflow-hidden bg-white p-6 shadow-sm sm:rounded-lg dark:bg-gray-800">
+                        <h3
+                            class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                            Buat QR Code Baru untuk: {{
+                                selectedEvent.name }}</h3>
+                        <form @submit.prevent="submitNewQr"
+                            class="mt-4 flex items-end gap-4">
                             <div class="flex-grow">
-                                <label for="label" class="mb-2 block text-sm font-medium">Label QR Code</label>
-                                <input
-                                    v-model="form.label"
-                                    id="label"
-                                    type="text"
+                                <label for="label"
+                                    class="mb-2 block text-sm font-medium">Label
+                                    QR Code</label>
+                                <input v-model="form.label"
+                                    id="label" type="text"
                                     placeholder="Contoh: Pintu Masuk Barat"
                                     class="mt-1 block w-full rounded-md p-2 dark:bg-gray-700"
-                                    required
-                                />
-                                <p v-if="form.errors.label" class="mt-1 text-sm text-red-500">{{ form.errors.label }}</p>
+                                    required />
+                                <p v-if="form.errors.label"
+                                    class="mt-1 text-sm text-red-500">
+                                    {{ form.errors.label }}
+                                </p>
                             </div>
-                            <button
-                                type="submit"
+                            <button type="submit"
                                 :disabled="form.processing"
-                                class="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white"
-                            >
-                                <Plus class="h-4 w-4" /> Buat
+                                class="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white">
+                                <Plus class="h-4 w-4" />
+                                Buat
                             </button>
                         </form>
                     </div>
 
                     <!-- Daftar QR Code -->
-                    <div class="overflow-hidden bg-white p-6 shadow-sm sm:rounded-lg dark:bg-gray-800">
-                        <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-                            <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200">Daftar QR Code</h2>
+                    <div
+                        class="overflow-hidden bg-white p-6 shadow-sm sm:rounded-lg dark:bg-gray-800">
+                        <div
+                            class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+                            <h2
+                                class="text-xl font-bold text-gray-800 dark:text-gray-200">
+                                Daftar QR Code</h2>
                             <!-- Tombol Cetak Semua -->
                             <button
                                 v-if="selectedEvent.static_qrs && selectedEvent.static_qrs.length > 0"
                                 @click="printAllQrCodes(selectedEvent.static_qrs, selectedEvent)"
-                                class="inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
-                            >
+                                class="inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
                                 <Printer class="h-4 w-4" />
                                 Cetak Semua
                             </button>
                         </div>
 
-                        <div v-if="!selectedEvent.static_qrs || selectedEvent.static_qrs.length === 0" class="mt-6 text-center text-gray-500">
+                        <div v-if="!selectedEvent.static_qrs || selectedEvent.static_qrs.length === 0"
+                            class="mt-6 text-center text-gray-500">
                             Belum ada QR Code dibuat.
                         </div>
-                        <div v-else class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                            <div
-                                v-for="qr in selectedEvent.static_qrs"
+                        <div v-else
+                            class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                            <div v-for="qr in selectedEvent.static_qrs"
                                 :key="qr.id"
-                                class="flex flex-col items-center rounded-lg border p-4 dark:border-gray-700"
-                            >
-                                <h4 class="text-lg font-semibold dark:text-white">{{ qr.label }}</h4>
-                                <canvas :id="`qr-canvas-${qr.id}`" @vue:mounted="() => generateQr(qr)"></canvas>
-                                <p class="mt-2 text-center font-mono text-xs break-all text-gray-400">{{ qr.code }}</p>
-                                <div class="mt-4 flex w-full justify-between">
-                                    <button @click="printQrCode(qr, selectedEvent)" class="text-sm text-blue-600 hover:underline">Cetak</button>
-                                    <button @click="deleteQr(qr)" class="text-red-600 hover:text-red-500">
-                                        <Trash2 class="h-4 w-4" />
+                                class="flex flex-col items-center rounded-lg border p-4 dark:border-gray-700">
+                                <h4
+                                    class="text-lg font-semibold dark:text-white">
+                                    {{ qr.label }}</h4>
+                                <canvas
+                                    :id="`qr-canvas-${qr.id}`"
+                                    @vue:mounted="() => generateQr(qr)"></canvas>
+                                <p
+                                    class="mt-2 text-center font-mono text-xs break-all text-gray-400">
+                                    {{ qr.code }}</p>
+                                <div
+                                    class="mt-4 flex w-full justify-between">
+                                    <button
+                                        @click="printQrCode(qr, selectedEvent)"
+                                        class="text-sm text-blue-600 hover:underline">Cetak</button>
+                                    <button
+                                        @click="deleteQr(qr)"
+                                        class="text-red-600 hover:text-red-500">
+                                        <Trash2
+                                            class="h-4 w-4" />
                                     </button>
                                 </div>
                             </div>
@@ -296,13 +323,16 @@ const breadcrumbs: BreadcrumbItem[] = [
                 </div>
 
                 <!-- Pesan Awal -->
-                <div
-                    v-else
-                    class="mt-8 flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-12 text-center dark:border-gray-600"
-                >
+                <div v-else
+                    class="mt-8 flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-12 text-center dark:border-gray-600">
                     <List class="h-16 w-16 text-gray-400" />
-                    <h3 class="mt-2 text-lg font-medium text-gray-900 dark:text-gray-100">Pilih Event untuk Memulai</h3>
-                    <p class="mt-1 text-sm text-gray-500">Pilih event dari dropdown di atas untuk mengelola QR Code statisnya.</p>
+                    <h3
+                        class="mt-2 text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Pilih Event untuk Memulai</h3>
+                    <p class="mt-1 text-sm text-gray-500">
+                        Pilih event dari dropdown di atas
+                        untuk mengelola QR Code statisnya.
+                    </p>
                 </div>
             </div>
         </div>
