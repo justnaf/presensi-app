@@ -13,5 +13,5 @@ defineProps<Props>();
 </script>
 
 <template>
-    <img :src="'logo/LogoSintesaOnly.svg'" alt="SINTESA">
+    <img :src="'/logo/LogoSintesaOnly.svg'" alt="SINTESA">
 </template>
