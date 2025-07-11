@@ -68,10 +68,11 @@ interface PageProps {
 // PROPS & SETUP
 //----------------------------------------------------------------
 const props = defineProps<PageProps>();
+const page = usePage();
 const pageUrl = computed(() => window.location.href);
 const posterImageUrl = computed(() => {
     if (props.event.poster_image) {
-        return `${window.location.origin}/storage/${props.event.poster_image}`;
+        return `${page.props.ziggy.url}/storage/${props.event.poster_image}`;
     }
     return null;
 });
@@ -152,25 +153,14 @@ onMounted(() => initMap());
 <template>
 
     <Head :title="event.name">
-        <meta name="description"
-            :content="event.description ?? undefined" />
-
-        <meta property="og:type" content="website" />
         <meta property="og:title" :content="event.name" />
         <meta property="og:description"
             :content="event.description ?? undefined" />
         <meta v-if="posterImageUrl" property="og:image"
             :content="posterImageUrl" />
         <meta property="og:url" :content="pageUrl" />
-        <meta property="og:site_name" content="SINTESA" />
-
         <meta name="twitter:card"
             content="summary_large_image" />
-        <meta name="twitter:title" :content="event.name" />
-        <meta name="twitter:description"
-            :content="event.description ?? undefined" />
-        <meta v-if="posterImageUrl" name="twitter:image"
-            :content="posterImageUrl" />
     </Head>
     <PublicLayout>
         <!-- START: Jumbotron Section -->
